@@ -1,31 +1,33 @@
+"use client"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { signOut } from "@/lib/auth"
-import { Session } from "next-auth"
+import Link from "next/link"
+import { logout } from "@/lib/action"
 
-export default function Setting({session}:{session: Session}) {
-    const handleLogout = async ()=>{
-        'use server'
-        await signOut
-    }
+export default function Setting() {
   return (
     <DropdownMenu>
   <DropdownMenuTrigger asChild>
     <Button variant="ghost" className="font-medium">
-        {session.user?.name}
+        ...
     </Button>
   </DropdownMenuTrigger>
   <DropdownMenuContent align="end" className="w-48">
-      <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
-        ログアウト
+      <DropdownMenuItem className="cursor-pointer">
+        <Link href="/dashboard/profile/edit">プロフィール編集</Link>
+      </DropdownMenuItem>
+      <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault();
+            logout(); 
+          }} >ログアウト</DropdownMenuItem>
+      <DropdownMenuItem className="cursor-pointer">
+        <Link href="/dashboard/profile/edit"></Link>
       </DropdownMenuItem>
   </DropdownMenuContent>
 </DropdownMenu>

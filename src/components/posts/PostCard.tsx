@@ -1,42 +1,44 @@
-// components/posts/PostCard.tsx
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
+import { formatDistanceToNow } from 'date-fns'
+import { ja } from 'date-fns/locale'
 
-type Post = {
-  id: string;
-  title: string;
-  content: string;
-};
+export type Post = {
+    id:string 
+    title:string
+    content:string
+    createdAt:string
+    author:{
+        name: string
+    }
+}
+export type PostCardProps = {post: Post}
 
-type Props = {
-  post: Post;
-};
-
-const PostCard = ({ post }: Props) => {
+const PostCard = ({ post }: PostCardProps) => {
+  
   return (
-    <Card className="w-full">
+    <Card className="hover:shadow-lg transition-shadow">
+      <Link href={`/dashboard/posts/${post.id}`}>
       <CardHeader>
-        <CardTitle>{post.title}</CardTitle>
+        <CardTitle className="line-clamp-2">{post.title}</CardTitle>
       </CardHeader>
 
       <CardContent>
         <p className="text-sm text-muted-foreground">{post.content}</p>
+        <div className="flex items-center justify-between text-sm text-grey-500">
+          <span>{post.author.name}</span>
+          <time >
+            {formatDistanceToNow(new Date(post.createdAt),{
+              addSuffix:true,
+              locale: ja})}</time>
+        </div>
       </CardContent>
-
-      <CardFooter className="flex gap-2">
-        <Link href={`/employee/${post.id}`} className="text-blue-600 underline">
-          Detail
-        </Link>
-        <Link href={`/employee/${post.id}/edit`} className="text-blue-600 underline">
-          Edit
-        </Link>
-      </CardFooter>
+      </Link>
     </Card>
   );
 };

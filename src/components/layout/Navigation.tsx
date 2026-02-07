@@ -7,12 +7,8 @@ import {
   NavigationMenuList
 } from "@/components/ui/navigation-menu"
 import React from 'react'
-import Setting from "./Setting"
-import { auth } from "@/lib/auth"
 
 export default async function Navigation() {
-    // const session = await auth()
-    // if(!session?.user?.email) throw new Error("不正なリクエストです。")
   return (
     <>
         <NavigationMenu>
@@ -34,20 +30,23 @@ export default async function Navigation() {
             </Button>
             <Button asChild>
                 <Link href="/register">
-                登録
+                ユーザ新規登録
                 </Link>
             </Button>
             <Button asChild>
-                <Link href="/dashboard/post/create">
+                <Link href="/dashboard/posts/create">
                 新規投稿
                 </Link>
             </Button>
             <Button asChild>
-                <Link href="/dashboard/edit">
+                <Link href="/dashboard">
                 投稿編集
                 </Link>
             </Button>
-            {/* <Setting session={session} /> */}
+            <Button asChild>
+                <Link href="/dashboard/profile">プロフィール画面</Link>
+            </Button>
+            
 
 
         </div>

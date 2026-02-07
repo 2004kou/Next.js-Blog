@@ -1,39 +1,43 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { createUser } from "@/lib/action";
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 
-type ActionState = {
-  success: boolean;
-  errors: Record<string, string[]>;
-};
 
-const initialState: ActionState = { success: false, errors: {} };
+type Draft = {
+  name:string;
+  email:string;
+  password:string;
+  confirmPassword:string;
+}
+const STORAGE_KEY = "register:draft"
 
 export default function RegisterForm() {
-  const [state, setState] = useState<ActionState>(initialState);
-  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+  const [draft,setDraft] =useState<Draft>({
+    name:"",
+    email:"",
+    password:"",
+    confirmPassword:"",
+  });
 
-  const errors = state?.errors ?? {}; // ← これが重要（落ちない）
-
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+   function onConfirm(e:React.FormEvent<HTMLFormElement>){
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
 
-    startTransition(async () => {
-      const result = await createUser(initialState, formData);
+    if(draft.password !== draft.confirmPassword){
+      alert("二つのパスワードが一致しません");
+      return;
+    }
+    sessionStorage.setItem(STORAGE_KEY,JSON.stringify(draft));
+    router.push("/register/confirm");
+   }
 
-      // result が壊れてても落ちないように保険
-      setState({
-        success: Boolean(result?.success),
-        errors: (result as any)?.errors ?? {},
-      });
-    });
-  }
+ 
+
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -42,43 +46,56 @@ export default function RegisterForm() {
       </CardHeader>
 
       <CardContent>
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form onSubmit={onConfirm} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">名前</Label>
-            <Input id="name" type="text" name="name" required />
-            {errors.name?.length ? (
-              <p className="text-red-500 text-sm mt-1">{errors.name.join(", ")}</p>
-            ) : null}
+            <Input
+              id="name"
+              value={draft.name}
+              onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
+              required
+            />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="email">メールアドレス</Label>
-            <Input id="email" type="email" name="email" required />
-            {errors.email?.length ? (
-              <p className="text-red-500 text-sm mt-1">{errors.email.join(", ")}</p>
-            ) : null}
+            <Input
+              id="email"
+              type="email"
+              value={draft.email}
+              onChange={(e) => setDraft((d) => ({ ...d, email: e.target.value }))}
+              required
+            />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="password">パスワード</Label>
-            <Input id="password" type="password" name="password" required />
-            {errors.password?.length ? (
-              <p className="text-red-500 text-sm mt-1">{errors.password.join(", ")}</p>
-            ) : null}
+            <Input
+              id="password"
+              type="password"
+              value={draft.password}
+              onChange={(e) =>
+                setDraft((d) => ({ ...d, password: e.target.value }))
+              }
+              required
+            />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">パスワード（確認）</Label>
-            <Input id="confirmPassword" type="password" name="confirmPassword" required />
-            {errors.confirmPassword?.length ? (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.confirmPassword.join(", ")}
-              </p>
-            ) : null}
+            <Input
+              id="confirmPassword"
+              type="password"
+              value={draft.confirmPassword}
+              onChange={(e) =>
+                setDraft((d) => ({ ...d, confirmPassword: e.target.value }))
+              }
+              required
+            />
           </div>
 
-          <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? "登録中..." : "登録"}
+          <Button type="submit" className="w-full">
+            確認画面へ
           </Button>
         </form>
       </CardContent>

@@ -1,24 +1,17 @@
-// components/posts/PostList.tsx
 import PostCard from "./PostCard";
 
-type Post = {
-  id: string;
-  title: string;
-  content: string;
-};
 
-type Props = {
-  posts: Post[];
-};
-
-const PostList = ({ posts }: Props) => {
+export default async function PostList({ posts}: { posts: any[]}) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {posts.map((post) => (
-        <PostCard key={post.id} post={post} />
-      ))}
+    <>
+    <div className="container mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {posts.map((post) => (
+          <PostCard key={post.id} post={post} />
+        ))}
+      </div> 
     </div>
-  );
-};
-
-export default PostList;
+    </>
+  )
+  
+}

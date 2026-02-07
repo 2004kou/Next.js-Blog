@@ -1,6 +1,6 @@
 import RegisterForm from "@/components/auth/RegisterForm"
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
   return (
     <RegisterForm></RegisterForm>
   )
