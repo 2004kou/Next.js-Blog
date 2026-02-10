@@ -39,11 +39,6 @@ export default async function Navigation() {
                 </Link>
             </Button>
             <Button asChild>
-                <Link href="/dashboard">
-                投稿編集
-                </Link>
-            </Button>
-            <Button asChild>
                 <Link href="/dashboard/profile">プロフィール画面</Link>
             </Button>
             
