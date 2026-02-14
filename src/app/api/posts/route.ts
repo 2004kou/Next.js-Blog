@@ -32,7 +32,6 @@ export async function GET(request: NextRequest) {
           },
           orderBy: { updatedAt: "desc" },
         });
-        console.log(posts,"!!!")
         return NextResponse.json({ posts });
     }
 

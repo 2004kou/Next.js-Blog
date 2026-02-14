@@ -44,4 +44,58 @@ describe("POST /api/users/register", () => {
 
     expect(res.status).toBe(201)
   })
+
+  it("既に登録済みのメールなら409を返す", async () => {
+    ;(prisma.user.findUnique as jest.Mock).mockResolvedValue({ user : {id: "1"}})
+    ;(prisma.user.create as jest.Mock).mockResolvedValue({ id : "1"})
+
+    const bcryptjs = require("bcryptjs")
+    ;(bcryptjs.hash as jest.Mock).mockResolvedValue("hashed-password")
+
+    ;(signIn as jest.Mock).mockResolvedValue(undefined)
+
+    const request = new Request("http://localhost:3000/api/users/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: "test",
+        email: "test@test.com",
+        password: "TestPassword1",         
+        confirmPassword: "TestPassword1",  
+      }),
+    })
+
+    const { POST } = await import("@/app/api/users/register/route") 
+    const res = await POST(request)
+
+    expect(res.status).toBe(409)
+  })
+
+  it("バリデーションエラー", async () => {
+    ;(prisma.user.findUnique as jest.Mock).mockResolvedValue(null)
+    ;(prisma.user.create as jest.Mock).mockResolvedValue({ id: "1" })
+
+    const bcryptjs = require("bcryptjs")
+    ;(bcryptjs.hash as jest.Mock).mockResolvedValue("hashed-password")
+
+    ;(signIn as jest.Mock).mockResolvedValue(undefined)
+
+    const request = new Request("http://localhost:3000/api/users/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: "test",
+        email: "test@test.com",
+        password: "Pass1",         
+        confirmPassword: "Pass1",  
+      }),
+    })
+
+    const { POST } = await import("@/app/api/users/register/route") 
+    const res = await POST(request)
+
+    expect(res.status).toBe(400)
+  })
+
+  
 })
